@@ -1,22 +1,27 @@
-'use strict';
-
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+const productsRouter = require('./routes/products');
+const usersRouter = require('./routes/users');
+const cartRouter = require('./routes/cart');
+const ordersRouter = require('./routes/orders');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middleware configuration
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Middleware to parse JSON requests
+app.use(express.json());
 
-// Sample route
-app.get('/', (req, res) => {
-    res.send('Hello World!');
+// Integrate all routes
+app.use('/products', productsRouter);
+app.use('/users', usersRouter);
+app.use('/cart', cartRouter);
+app.use('/orders', ordersRouter);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
 });
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
